@@ -94,11 +94,16 @@ import { renderIntoDocument } from "react-dom/test-utils";
 export default function App() {
   const [newTodo, setNewTodo] = useState("");
   const [tasks, setTask] = useState([]);
+  const [isChecked, setIsChecked] = useState(false);
 
   function handleSubmit(e) {
     e.preventDefault();
     setTask(() => [...tasks, newTodo]);
     setNewTodo("");
+  }
+  function handleCheck(e) {
+    // console.log(e.target.checked);
+    setIsChecked(e.target.checked);
   }
 
   return (
@@ -116,8 +121,8 @@ export default function App() {
       </form>
       {tasks.map((task, i) => (
         <div key={i} className="list">
-          <input type="checkbox" />
-          <p>{task}</p>
+          <input type="checkbox" onChange={(e) => handleCheck(e)} />
+          <p className={isChecked ? "tachado" : ""}>{task}</p>
         </div>
       ))}
     </div>
