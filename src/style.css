@@ -1,0 +1,27 @@
+body {
+  background-color: grey;
+}
+
+.container {
+  border: 1px solid red;
+  width: 90%;
+  height: 500px;
+  margin: 0 auto;
+  margin-top: 2rem;
+}
+
+.text {
+  text-align: center;
+}
+
+.text p {
+  display: inline;
+}
+
+.text input {
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+}
+.list {
+  display: flex;
+}
