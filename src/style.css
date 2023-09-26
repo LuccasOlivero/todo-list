@@ -1,7 +1,7 @@
 body {
   background-color: grey;
 }
-
+/* 
 .container {
   border: 1px solid red;
   width: 90%;
@@ -27,4 +27,7 @@ body {
 }
 .tachado {
   text-decoration: line-through;
+} */
+.App {
+  text-align: center;
 }

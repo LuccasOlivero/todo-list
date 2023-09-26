@@ -1,130 +1,116 @@
-// import { useState } from "react";
-
-import { useState } from "react";
-import { renderIntoDocument } from "react-dom/test-utils";
-
-// function App() {
-//   return (
-//     <div>
-//       <TipCalculator />
-//     </div>
-//   );
-// }
-
-// export default App;
-
-// function TipCalculator() {
-//   const [bill, setBill] = useState("");
-//   const [ownTip, setOwnTip] = useState(0);
-//   const [friendTip, setFriendTip] = useState(0);
-
-//   return (
-//     <div>
-//       <Bill setBill={setBill} />
-//       <SelectPercentaje setOwnTip={setOwnTip}>
-//         how did you like the service
-//       </SelectPercentaje>
-//       <SelectPercentaje setOwnTip={setFriendTip}>
-//         how did your friend like the service
-//       </SelectPercentaje>
-//       <Ouput bill={bill} ownTip={ownTip} friendTip={friendTip} />
-//       <Reset
-//         setBill={setBill}
-//         setOwnTip={setOwnTip}
-//         setFriendTip={setFriendTip}
-//       />
-//     </div>
-//   );
-// }
-
-// function Bill({ setBill }) {
-//   function handleBill(e) {
-//     // e.preventDefault();
-//     setBill(e);
-//   }
-//   return (
-//     <div>
-//       <label>how much was the bill ?</label>
-//       <input
-//         type="text"
-//         placeholder="bill value"
-//         onChange={(e) => handleBill(e.target.value)}
-//       />
-//     </div>
-//   );
-// }
-// function SelectPercentaje({ children, setOwnTip }) {
-//   function handleOption(e) {
-//     setOwnTip(+e);
-//   }
-
-//   return (
-//     <div>
-//       <label>{children}</label>
-//       <select onChange={(e) => handleOption(e.target.value)}>
-//         <option value="0">Dissatisfied</option>
-//         <option value="5">It was ok</option>
-//         <option value="10">It was good</option>
-//         <option value="20">Amazing</option>
-//       </select>
-//     </div>
-//   );
-// }
-
-// function Ouput({ bill, ownTip, friendTip }) {
-//   const result = bill * (ownTip / 100) + bill * (friendTip / 100);
-
-//   return (
-//     <h3>
-//       you pay {result + bill} (${bill} + ${ownTip}tip)
-//     </h3>
-//   );
-// }
-// function Reset({ setBill, setOwnTip, setFriendTip }) {
-//   function handleReset() {
-//     setBill("");
-//     setOwnTip(0);
-//     setFriendTip(0);
-//   }
-
-//   return <button onClick={handleReset}>Reset</button>;
-// }
-// ---------------- tip calculator ----------------
+import { useReducer, useState } from "react";
 
 export default function App() {
-  const [newTodo, setNewTodo] = useState("");
-  const [tasks, setTask] = useState([]);
-  const [isChecked, setIsChecked] = useState(false);
+  const initialState = {
+    balance: 0,
+    loan: 0,
+    btn: true,
+  };
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    setTask(() => [...tasks, newTodo]);
-    setNewTodo("");
-  }
-  function handleCheck(e) {
-    // console.log(e.target.checked);
-    setIsChecked(e.target.checked);
-  }
+  const AMOUNT_DEPOSIT = 150;
+  const AMOUNT_WITHDRAW = 50;
+  const LOAN = 5000;
+  const [{ balance, loan, btn }, dispatch] = useReducer(reducer, initialState);
 
+  function reducer(state, action) {
+    switch (action.type) {
+      case "openAccount":
+        return { ...state, balance: 500, btn: false };
+      case "deposit":
+        return { ...state, balance: state.balance + AMOUNT_DEPOSIT };
+      case "withdraw":
+        return {
+          ...state,
+          balance:
+            state.balance > 0 ? state.balance - AMOUNT_WITHDRAW : state.balance,
+        };
+      case "requestLoan":
+        return {
+          ...state,
+          loan: state.loan === LOAN ? state.loan : state.loan + LOAN,
+        };
+      case "payLoan":
+        return {
+          ...state,
+          balance:
+            state.balance >= LOAN ? state.balance - state.loan : state.balance,
+          loan: state.balance >= LOAN ? state.loan - LOAN : state.loan,
+        };
+      case "closeAccount":
+        return {
+          ...state,
+          btn: state.balance === state.loan ? true : false,
+        };
+      default:
+        return { ...state };
+    }
+  }
   return (
-    <div className="container">
-      <h2>To-do List</h2>
-      <form onSubmit={(e) => handleSubmit(e)}>
-        <input
-          value={newTodo}
-          type="text"
-          onChange={(e) => {
-            setNewTodo(e.target.value);
+    <div className="App">
+      <h1>useReducer Bank Account</h1>
+      <p>Balance: {balance}</p>
+      <p>Loan: {loan}</p>
+
+      <p>
+        <button
+          onClick={() => {
+            dispatch({ type: "openAccount" });
           }}
-        />
-        <button>Add</button>
-      </form>
-      {tasks.map((task, i) => (
-        <div key={i} className="list">
-          <input type="checkbox" onChange={(e) => handleCheck(e)} />
-          <p className={isChecked ? "tachado" : ""}>{task}</p>
-        </div>
-      ))}
+          disabled={false}
+        >
+          Open account
+        </button>
+      </p>
+      <p>
+        <button
+          onClick={() => {
+            dispatch({ type: "deposit" });
+          }}
+          disabled={btn}
+        >
+          Deposit 150
+        </button>
+      </p>
+      <p>
+        <button
+          onClick={() => {
+            dispatch({ type: "withdraw" });
+          }}
+          disabled={btn}
+        >
+          Withdraw 50
+        </button>
+      </p>
+      <p>
+        <button
+          onClick={() => {
+            dispatch({ type: "requestLoan" });
+          }}
+          disabled={btn}
+        >
+          Request a loan of 5000
+        </button>
+      </p>
+      <p>
+        <button
+          onClick={() => {
+            dispatch({ type: "payLoan" });
+          }}
+          disabled={btn}
+        >
+          Pay loan
+        </button>
+      </p>
+      <p>
+        <button
+          onClick={() => {
+            dispatch({ type: "closeAccount" });
+          }}
+          disabled={btn}
+        >
+          Close account
+        </button>
+      </p>
     </div>
   );
 }
