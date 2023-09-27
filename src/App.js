@@ -11,7 +11,6 @@ export default function App() {
   const AMOUNT_WITHDRAW = 50;
   const LOAN = 5000;
   const [{ balance, loan, btn }, dispatch] = useReducer(reducer, initialState);
-
   function reducer(state, action) {
     switch (action.type) {
       case "openAccount":
